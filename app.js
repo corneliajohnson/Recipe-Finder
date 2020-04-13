@@ -14,20 +14,29 @@ searchBtn.addEventListener('click', (e)=>{
   if (searchInput !== '') {
     spoonacular.getRecipe(searchInput)
     .then(data => {
-      //if(data.results.length === 0) {
+      if(data.results[0] === undefined) {
         // Show Alert
-      //} else {
+        ui.showAlert('Recipe not found', 'alert alert-dismissible alert-primary');
+        console.log('ERROR');
+      } else {
         // Show Recipe
-        console.log(data.results[0].id)
-        ui.showRecipe(data.results[0]);
-        spoonacular.getDetails(data.results[0].id)
-        .then(info => {
-            ui.showIngredience(info.extendedIngredients.original);
-        })
-     // }
-    })
+        for(let i = 0; i < 2; i++ ) {
+          ui.showRecipe(data.results[i]);
+          
+          let id = data.results[i].id;
+          spoonacular.getDetails(id)
+          .then(data => {
+              ui.showLink(data);
+              ui.showIngredients(data.extendedIngredients);
+              ui.showPrice(data);
+              ui.showDiets(data);
+          });
+        }
+     }
+    });
   } else {
     //Clear The Recipe
+    ui.clearRecipe();
   }
 
 });
